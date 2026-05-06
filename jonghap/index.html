@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>종합소득세·지역건강보험료 비교 시뮬레이션 (2026년 귀속)</title>
+<script src="../auth.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', '맑은 고딕', sans-serif;
+    background: #f5f7fa; color: #1a2332; padding: 24px; line-height: 1.6;
+  }
+  .container { max-width: 1100px; margin: 0 auto; }
+  header { margin-bottom: 24px; }
+  h1 { font-size: 22px; font-weight: 700; color: #0d1b2a; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #5a6577; }
+
+  .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #0d1b2a; padding-bottom: 8px; border-bottom: 2px solid #e5e9f0; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row.single { grid-template-columns: 1fr; }
+  .form-row .field { display: flex; flex-direction: column; }
+
+  label { font-size: 13px; font-weight: 500; color: #4a5568; margin-bottom: 4px; }
+  .help { font-size: 11px; color: #8a94a6; font-weight: 400; margin-left: 4px; }
+
+  input[type="text"] {
+    width: 100%; padding: 10px 12px; font-size: 14px;
+    border: 1px solid #d1d9e0; border-radius: 6px;
+    font-family: inherit; text-align: right;
+  }
+  input[type="text"]:focus { outline: none; border-color: #2c5aa0; box-shadow: 0 0 0 3px rgba(44,90,160,0.1); }
+
+  .scenario-1-input { background: #fafbfc; }
+  .scenario-2-input { background: #f0f5fc; border-color: #2c5aa0 !important; }
+
+  .btn-group { margin-top: 16px; display: flex; gap: 8px; }
+  button {
+    padding: 10px 20px; border: none; border-radius: 6px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-calc { background: #2c5aa0; color: white; }
+  .btn-calc:hover { background: #1a4080; }
+  .btn-print { background: #5a6577; color: white; }
+  .btn-print:hover { background: #3d4856; }
+  .btn-reset { background: #e5e9f0; color: #4a5568; }
+  .btn-reset:hover { background: #d1d9e0; }
+
+  .result-table { width: 100%; border-collapse: collapse; }
+  .result-table th, .result-table td {
+    padding: 10px 12px; text-align: right; border-bottom: 1px solid #e5e9f0; font-size: 14px;
+  }
+  .result-table th:first-child, .result-table td:first-child {
+    text-align: left; color: #4a5568; font-weight: 500;
+  }
+  .result-table thead { background: #f0f4f8; }
+  .result-table thead th { font-size: 13px; font-weight: 600; color: #0d1b2a; text-align: right; }
+  .result-table thead th:first-child { text-align: left; }
+  .result-table .section-row td {
+    background: #f8fafc; font-weight: 600; color: #0d1b2a;
+    border-top: 2px solid #d1d9e0;
+  }
+  .result-table .total-row td {
+    background: #fff8e1; font-weight: 700; color: #0d1b2a; font-size: 15px;
+    border-top: 2px solid #f0c040; border-bottom: 2px solid #f0c040;
+  }
+  .diff-saving { color: #2c7a2c; font-weight: 600; }
+  .diff-loss { color: #c92a2a; font-weight: 600; }
+  .diff-zero { color: #8a94a6; }
+
+  .note { font-size: 12px; color: #6b7589; line-height: 1.7; }
+  .note strong { color: #0d1b2a; }
+
+  .summary-box {
+    background: linear-gradient(135deg, #f0f7ff 0%, #fff8e1 100%);
+    padding: 20px; border-radius: 8px; margin-top: 16px;
+    border: 1px solid #d1e3f5;
+  }
+  .summary-title { font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 8px; }
+  .summary-amount { font-size: 28px; font-weight: 700; color: #2c5aa0; }
+  .summary-desc { font-size: 13px; color: #5a6577; margin-top: 4px; }
+
+  @media print {
+    body { background: white; padding: 0; }
+    .card { box-shadow: none; border: 1px solid #d1d9e0; }
+    button { display: none; }
+    .btn-group { display: none; }
+  }
+  @media (max-width: 700px) {
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>종합소득세 · 지역건강보험료 비교 시뮬레이션</h1>
+      <div class="subtitle">2026년 귀속 기준 · 세무법인삼호 남부지점 김선영 세무사</div>
+    </header>
+
+    <!-- 입력부 -->
+    <div class="card">
+      <div class="card-title">입력</div>
+
+      <div class="form-row single">
+        <div class="field">
+          <label>총수입금액 <span class="help">(연 단위, 원)</span></label>
+          <input type="text" id="revenue" inputmode="numeric" oninput="formatNum(this)" placeholder="0">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>① 필요경비 (현재) <span class="help">(원)</span></label>
+          <input type="text" id="cost1" class="scenario-1-input" inputmode="numeric" oninput="formatNum(this)" placeholder="0">
+        </div>
+        <div class="field">
+          <label>② 필요경비 (비용 추가 후) <span class="help">(원)</span></label>
+          <input type="text" id="cost2" class="scenario-2-input" inputmode="numeric" oninput="formatNum(this)" placeholder="0">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>종합소득공제 합계 <span class="help">(인적공제·연금보험료공제·노란우산공제 등, 원)</span></label>
+          <input type="text" id="deduction" inputmode="numeric" oninput="formatNum(this)" value="1,500,000">
+        </div>
+        <div class="field">
+          <label>세액공제 합계 <span class="help">(자녀·표준세액공제 등, 원)</span></label>
+          <input type="text" id="taxcredit" inputmode="numeric" oninput="formatNum(this)" value="70,000">
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="field">
+          <label>재산보험료 부과점수 <span class="help">(점, 모르는 경우 0 입력 → 소득분만 계산)</span></label>
+          <input type="text" id="propscore" inputmode="numeric" oninput="formatNum(this)" placeholder="0">
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn-calc" onclick="calculate()">계산하기</button>
+        <button class="btn-print" onclick="window.print()">인쇄</button>
+        <button class="btn-reset" onclick="resetAll()">초기화</button>
+      </div>
+    </div>
+
+    <!-- 결과부 -->
+    <div class="card" id="resultCard" style="display:none;">
+      <div class="card-title">계산 결과</div>
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>구분</th>
+            <th>① 현재</th>
+            <th>② 비용 추가 후</th>
+            <th>차이 (절감액)</th>
+          </tr>
+        </thead>
+        <tbody id="resultBody"></tbody>
+      </table>
+
+      <div class="summary-box">
+        <div class="summary-title">💡 비용 추가에 따른 연간 총 절감액</div>
+        <div class="summary-amount" id="totalSaving">0 원</div>
+        <div class="summary-desc" id="totalSavingDesc">종합소득세 + 지방소득세 + 지역건강보험료 합산 기준</div>
+      </div>
+    </div>
+
+    <!-- 안내 -->
+    <div class="card">
+      <div class="card-title">계산 기준 (2026년 귀속)</div>
+      <div class="note">
+        <strong>· 종합소득세율</strong> (소득세법 §55):<br>
+        &nbsp;&nbsp;1,400만 이하 6% / 5,000만 이하 15%(누진공제 126만) / 8,800만 이하 24%(576만) / 1.5억 이하 35%(1,544만) /<br>
+        &nbsp;&nbsp;3억 이하 38%(1,994만) / 5억 이하 40%(2,594만) / 10억 이하 42%(3,594만) / 10억 초과 45%(6,594만)<br>
+        <strong>· 지방소득세</strong>: 종합소득세 산출세액 × 10%<br>
+        <strong>· 지역건강보험료율</strong>: 소득월액 × 7.19% (2026년)<br>
+        <strong>· 재산보험료</strong>: 부과점수 × 211.5원 (2026년, 자동차 부과 폐지)<br>
+        <strong>· 장기요양보험료율</strong>: 건강보험료 × 13.14% (2026년)<br><br>
+        ※ 본 시뮬레이션은 <strong>단일 사업소득 단순 추정치</strong>입니다. 실제 신고 시에는 합산소득, 가산세, 중간예납세액, 지방소득세 세액공제, 재산공제 등이 반영되어 결과가 달라질 수 있습니다.<br>
+        ※ 정확한 지역건강보험료는 <a href="https://www.nhis.or.kr/nhis/minwon/initCtrbCalcView.do" target="_blank" style="color:#2c5aa0;">국민건강보험공단 모의계산기</a>를 함께 사용하시기 바랍니다.<br>
+        ※ 재산보험료 부과점수는 공단에서 산정하는 값이므로, 공단 홈페이지 또는 고지서에서 확인하시기 바랍니다.
+      </div>
+    </div>
+  </div>
+
+<script>
+// 천 단위 콤마 포맷
+function formatNum(input) {
+  let value = input.value.replace(/[^\d]/g, '');
+  if (value === '') { input.value = ''; return; }
+  input.value = parseInt(value).toLocaleString('ko-KR');
+}
+function getNumber(id) {
+  const raw = document.getElementById(id).value.replace(/[^\d]/g, '');
+  return parseFloat(raw) || 0;
+}
+function fmt(n) {
+  return Math.round(n).toLocaleString('ko-KR');
+}
+
+// 종합소득세 산출세액 계산 (2026년 귀속, 소득세법 §55)
+function calcIncomeTax(taxBase) {
+  if (taxBase <= 0) return 0;
+  if (taxBase <= 14000000)    return taxBase * 0.06;
+  if (taxBase <= 50000000)    return taxBase * 0.15 - 1260000;
+  if (taxBase <= 88000000)    return taxBase * 0.24 - 5760000;
+  if (taxBase <= 150000000)   return taxBase * 0.35 - 15440000;
+  if (taxBase <= 300000000)   return taxBase * 0.38 - 19940000;
+  if (taxBase <= 500000000)   return taxBase * 0.40 - 25940000;
+  if (taxBase <= 1000000000)  return taxBase * 0.42 - 35940000;
+  return taxBase * 0.45 - 65940000;
+}
+
+function calcScenario(revenue, cost, deduction, taxcredit, propscore) {
+  const businessIncome = Math.max(0, revenue - cost);     // 사업소득금액
+  const taxBase = Math.max(0, businessIncome - deduction); // 과세표준
+  const calcTax = calcIncomeTax(taxBase);                  // 산출세액
+  const decisionTax = Math.max(0, calcTax - taxcredit);    // 결정세액(국세)
+  const localTax = calcTax * 0.10;                         // 지방소득세 (산출세액의 10%)
+  const incomeTaxTotal = decisionTax + localTax;           // 소득세 합계
+
+  // 지역건강보험료 (월)
+  const monthlyIncome = businessIncome / 12;
+  const incomeHealthMonthly = monthlyIncome * 0.0719;
+  const propertyHealthMonthly = propscore * 211.5;
+  const healthMonthly = incomeHealthMonthly + propertyHealthMonthly;
+  const ltcMonthly = healthMonthly * 0.1314;
+  const monthlyTotal = healthMonthly + ltcMonthly;
+  const annualHealthTotal = monthlyTotal * 12;
+
+  return {
+    revenue, cost, businessIncome, taxBase,
+    calcTax, decisionTax, localTax, incomeTaxTotal,
+    healthMonthly, ltcMonthly, monthlyTotal, annualHealthTotal,
+    grandTotal: incomeTaxTotal + annualHealthTotal
+  };
+}
+
+function calculate() {
+  const revenue = getNumber('revenue');
+  const cost1 = getNumber('cost1');
+  const cost2 = getNumber('cost2');
+  const deduction = getNumber('deduction');
+  const taxcredit = getNumber('taxcredit');
+  const propscore = getNumber('propscore');
+
+  if (revenue === 0) {
+    alert('총수입금액을 입력해주세요.');
+    return;
+  }
+
+  const r1 = calcScenario(revenue, cost1, deduction, taxcredit, propscore);
+  const r2 = calcScenario(revenue, cost2, deduction, taxcredit, propscore);
+
+  function diffCell(v1, v2) {
+    const d = v1 - v2;  // 절감액 = 현재(높음) - 변경(낮음)
+    let cls = 'diff-zero', sign = '';
+    if (d > 0.5) { cls = 'diff-saving'; sign = '−'; }
+    else if (d < -0.5) { cls = 'diff-loss'; sign = '+'; }
+    return `<td class="${cls}">${sign}${fmt(Math.abs(d))}</td>`;
+  }
+
+  function row(label, v1, v2, isSection=false, isTotal=false) {
+    let cls = '';
+    if (isTotal) cls = ' class="total-row"';
+    else if (isSection) cls = ' class="section-row"';
+    return `<tr${cls}>
+      <td>${label}</td>
+      <td>${fmt(v1)}</td>
+      <td>${fmt(v2)}</td>
+      ${diffCell(v1, v2)}
+    </tr>`;
+  }
+
+  let html = '';
+  // 소득 계산 흐름
+  html += row('총수입금액', r1.revenue, r2.revenue);
+  html += row('필요경비', r1.cost, r2.cost);
+  html += row('사업소득금액', r1.businessIncome, r2.businessIncome);
+  html += row('과세표준', r1.taxBase, r2.taxBase);
+
+  // 세금
+  html += row('▌ 종합소득세 ▌', r1.calcTax, r2.calcTax, true);
+  html += row('&nbsp;&nbsp;산출세액', r1.calcTax, r2.calcTax);
+  html += row('&nbsp;&nbsp;결정세액(국세)', r1.decisionTax, r2.decisionTax);
+  html += row('&nbsp;&nbsp;지방소득세', r1.localTax, r2.localTax);
+  html += row('&nbsp;&nbsp;소득세 합계 (연)', r1.incomeTaxTotal, r2.incomeTaxTotal);
+
+  // 건보료
+  html += row('▌ 지역건강보험료 ▌', r1.monthlyTotal, r2.monthlyTotal, true);
+  html += row('&nbsp;&nbsp;건강보험료 (월)', r1.healthMonthly, r2.healthMonthly);
+  html += row('&nbsp;&nbsp;장기요양보험료 (월)', r1.ltcMonthly, r2.ltcMonthly);
+  html += row('&nbsp;&nbsp;월 합계', r1.monthlyTotal, r2.monthlyTotal);
+  html += row('&nbsp;&nbsp;연간 합계', r1.annualHealthTotal, r2.annualHealthTotal);
+
+  // 총합
+  html += row('총 부담액 (연)', r1.grandTotal, r2.grandTotal, false, true);
+
+  document.getElementById('resultBody').innerHTML = html;
+
+  // 요약 박스
+  const totalSaving = r1.grandTotal - r2.grandTotal;
+  const savingEl = document.getElementById('totalSaving');
+  const descEl = document.getElementById('totalSavingDesc');
+  if (totalSaving > 0.5) {
+    savingEl.textContent = '−' + fmt(totalSaving) + ' 원';
+    savingEl.style.color = '#2c7a2c';
+    descEl.textContent = `비용 ${fmt(r2.cost - r1.cost)}원 추가 시, 연간 총 ${fmt(totalSaving)}원 절감 (종합소득세 + 지방소득세 + 지역건보료 합산)`;
+  } else if (totalSaving < -0.5) {
+    savingEl.textContent = '+' + fmt(Math.abs(totalSaving)) + ' 원';
+    savingEl.style.color = '#c92a2a';
+    descEl.textContent = '비용 변경 시 부담액이 오히려 증가합니다.';
+  } else {
+    savingEl.textContent = '0 원';
+    savingEl.style.color = '#8a94a6';
+    descEl.textContent = '두 시나리오의 결과가 동일합니다.';
+  }
+
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultCard').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function resetAll() {
+  ['revenue','cost1','cost2','propscore'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('deduction').value = '1,500,000';
+  document.getElementById('taxcredit').value = '70,000';
+  document.getElementById('resultCard').style.display = 'none';
+}
+</script>
+</body>
+</html>

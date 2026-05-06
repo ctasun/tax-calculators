@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>김선영 세무사 · 세무 계산기</title>
+<script src="auth.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', '맑은 고딕', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+    color: #1a2332;
+    min-height: 100vh;
+    padding: 32px 24px;
+    line-height: 1.6;
+  }
+  .container { max-width: 980px; margin: 0 auto; }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 32px 0 24px;
+  }
+  .logo {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #0d1b2a;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: #5a6577;
+  }
+
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #4a5568;
+    margin-bottom: 14px;
+    padding-left: 4px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(13,27,42,0.06);
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+    display: block;
+    position: relative;
+    border: 1.5px solid transparent;
+  }
+  .card.active:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px rgba(44,90,160,0.18);
+    border-color: #2c5aa0;
+  }
+  .card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f8fafc;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 100px;
+    margin-bottom: 14px;
+    letter-spacing: 0.3px;
+  }
+  .badge.active { background: #e8f0fc; color: #2c5aa0; }
+  .badge.coming { background: #f0f4f8; color: #8a94a6; }
+  .badge.external { background: #fff5e6; color: #c75c00; }
+
+  .card.external:hover {
+    border-color: #c75c00;
+    box-shadow: 0 12px 28px rgba(199,92,0,0.18);
+  }
+  .card.external .arrow { color: #c4cbd6; }
+  .card.external:hover .arrow { color: #c75c00; }
+
+  .card h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0d1b2a;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+  }
+  .card p {
+    font-size: 13px;
+    color: #5a6577;
+    line-height: 1.55;
+  }
+  .card .arrow {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    color: #c4cbd6;
+    font-size: 20px;
+    transition: transform 0.2s;
+  }
+  .card.active .arrow { color: #2c5aa0; }
+  .card.active:hover .arrow { transform: translateX(4px); }
+
+  footer {
+    text-align: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid #d1d9e0;
+    font-size: 12px;
+    color: #8a94a6;
+    line-height: 1.6;
+  }
+  footer strong { color: #4a5568; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">📊</div>
+      <h1>세무 계산기</h1>
+      <div class="subtitle">세무법인삼호 남부지점 · 김선영 세무사</div>
+    </header>
+
+    <div class="cards">
+      <a href="jonghap/" class="card active">
+        <span class="arrow">→</span>
+        <div class="badge active">2026년 귀속</div>
+        <h2>종합소득세 비교</h2>
+        <p>비용 추가에 따른 종합소득세 + 지역건강보험료 절세효과 시뮬레이션</p>
+      </a>
+      <a href="https://hometax.go.kr/websquare/websquare.html?w2xPath=/ui/pp/index_pp.xml&tmIdx=45&tm2lIdx=4502000000&tm3lIdx=4502080000" target="_blank" rel="noopener noreferrer" class="card active external">
+        <span class="arrow">↗</span>
+        <div class="badge external">홈택스 연결</div>
+        <h2>근로·자녀장려금</h2>
+        <p>홈택스 공식 모의계산기로 이동 (수급 가능 여부 및 예상 지급액 확인)</p>
+      </a>
+    </div>
+
+    <footer>
+      <strong>© 2026 김선영 세무사</strong><br>
+      본 계산기는 단순 추정치이며, 실제 신고 결과와 차이가 있을 수 있습니다.<br>
+      정확한 세액은 반드시 세무 전문가의 검토를 받으시기 바랍니다.
+    </footer>
+  </div>
+</body>
+</html>
