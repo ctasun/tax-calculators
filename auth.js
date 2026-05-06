@@ -1,10 +1,10 @@
 /**
  * 세무 계산기 접속 인증 스크립트
  * 비밀번호 변경 시 CORRECT_HASH 값만 새 SHA-256 해시로 교체
- * 현재 비밀번호: samho2026 (변경 시 알려주세요)
+ * 현재 비밀번호: samho0115! (변경 시 알려주세요)
  */
 (function() {
-  const CORRECT_HASH = '603eb1f675c9e144216ca80397a82c6144eba6842f0c3c31aff6482a8494b84f';
+  const CORRECT_HASH = 'c478cb090d719b82d94f58da9cf318c74e641b809882087772a0243a3925e9b0';
 
   // 이미 인증된 경우 즉시 통과
   if (localStorage.getItem('tax-calc-auth') === CORRECT_HASH) {
