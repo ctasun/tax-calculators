@@ -129,7 +129,7 @@
 
       <div class="row1">
         <label>총수입금액 <span class="help">(원)</span></label>
-        <input type="text" id="rev" inputmode="numeric" placeholder="선택입력" oninput="formatNum(this);autoCalc()">
+        <input type="text" id="rev" inputmode="numeric" placeholder="선택입력" oninput="formatNum(this);autoCalc()" onkeydown="handleNavKey(event)">
       </div>
 
       <div class="grid">
@@ -141,11 +141,11 @@
         <!-- 소득금액 행 -->
         <div class="input-box">
           <div class="ib-label">소득금액 (조정전) <span class="help">(원)</span></div>
-          <input type="text" id="inc1" inputmode="numeric" placeholder="필수입력" oninput="formatNum(this);autoCalc()">
+          <input type="text" id="inc1" inputmode="numeric" placeholder="필수입력" oninput="formatNum(this);autoCalc()" onkeydown="handleNavKey(event)">
         </div>
         <div class="input-box">
           <div class="ib-label">M-U경비 <span class="help">(원)</span></div>
-          <input type="text" id="mu" inputmode="numeric" placeholder="필수입력" oninput="formatNum(this);autoCalc()">
+          <input type="text" id="mu" inputmode="numeric" placeholder="필수입력" oninput="formatNum(this);autoCalc()" onkeydown="handleNavKey(event)">
         </div>
         <div class="auto-field">
           <div class="af-label">소득금액 (조정후)</div>
@@ -404,6 +404,7 @@ function moveFocusTo(id) {
   if (el) { el.focus(); el.select(); }
 }
 function handleNavKey(e) {
+  if (e.isComposing || e.keyCode === 229) return;
   const id = e.target.id;
   const pos = getNavPos(id);
   if (!pos) return;
@@ -441,4 +442,18 @@ function handleNavKey(e) {
   if (e.key === 'ArrowRight' && atEnd) {
     if (c + 1 < navGrid[r].length) {
       e.preventDefault();
-      moveFocusTo(navGri
+      moveFocusTo(navGrid[r][c + 1]);
+    }
+    return;
+  }
+  if (e.key === 'ArrowLeft' && atStart) {
+    if (c - 1 >= 0) {
+      e.preventDefault();
+      moveFocusTo(navGrid[r][c - 1]);
+    }
+    return;
+  }
+}
+</script>
+</body>
+</html>
