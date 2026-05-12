@@ -18,9 +18,7 @@
   .card { background: white; border-radius: 12px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
   .card-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; color: #0d1b2a; padding-bottom: 8px; border-bottom: 2px solid #e5e9f0; }
 
-  .row1 { margin-bottom: 12px; }
-  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 12px; row-gap: 8px; margin-bottom: 12px; }
-
+  .row1 { margin-bottom: 16px; }
   label { font-size: 13px; font-weight: 500; color: #4a5568; margin-bottom: 4px; display: block; }
   .help { font-size: 11px; color: #8a94a6; font-weight: 400; margin-left: 4px; }
 
@@ -31,14 +29,24 @@
   }
   input[type="text"]:focus { outline: none; border-color: #2c5aa0; box-shadow: 0 0 0 3px rgba(44,90,160,0.1); }
 
-  .scenario-1-input { background: #fafbfc; }
   .mu-input { background: #f0f5fc; border-color: #2c5aa0 !important; }
+
+  .grid { display: grid; grid-template-columns: 1fr 0.7fr 1fr; column-gap: 14px; row-gap: 12px; align-items: end; }
+  .col-header { font-size: 13px; font-weight: 600; color: #2c5aa0; text-align: center; padding: 8px 0; background: #e8f0fc; border-radius: 6px; }
+  .col-header.after { color: #2c7a2c; background: #e8f5e8; }
+  .field-block { display: flex; flex-direction: column; }
+  .center-cell { display: flex; align-items: center; justify-content: center; }
+  .center-cell.label-cell label { margin: 0; text-align: center; width: 100%; }
 
   .auto-field { background: #f8fafc; border: 1px dashed #c4cbd6; border-radius: 6px; padding: 10px 12px; }
   .auto-field .af-label { font-size: 12px; font-weight: 500; color: #5a6577; margin-bottom: 5px; }
   .auto-field .af-value { font-size: 14px; font-weight: 600; color: #0d1b2a; text-align: right; }
-  .auto-field .af-formula { font-size: 11px; color: #8a94a6; text-align: right; margin-top: 3px; }
-  .empty { }
+  .auto-field .af-value.tax { color: #2c5aa0; font-weight: 700; font-size: 16px; }
+  .auto-field .af-value.tax.after { color: #2c7a2c; }
+
+  .savings-box { background: #e8f5e8; border: 1.5px solid #2c7a2c; border-radius: 6px; padding: 10px 12px; text-align: right; }
+  .savings-box .s-label { font-size: 11px; font-weight: 600; color: #2c7a2c; margin-bottom: 3px; display: block; }
+  .savings-box .s-value { font-size: 18px; font-weight: 700; color: #2c7a2c; }
 
   .btn-group { margin-top: 16px; display: flex; gap: 8px; }
   button {
@@ -96,7 +104,7 @@
     .btn-group { display: none; }
   }
   @media (max-width: 700px) {
-    .grid3 { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -112,35 +120,48 @@
       <div class="card-title">입력</div>
 
       <div class="row1">
-        <label>총수입금액 <span class="help">(연 단위, 원)</span></label>
-        <input type="text" id="revenue" inputmode="numeric" oninput="formatNum(this);autoCalc()" placeholder="0">
+        <label>총수입금액 <span class="help">(선택, 원)</span></label>
+        <input type="text" id="rev" inputmode="numeric" placeholder="0 (선택)" oninput="formatNum(this);autoCalc()">
       </div>
 
-      <div class="grid3">
-        <div>
-          <label>필요경비 (조정전) <span class="help">(원)</span></label>
-          <input type="text" id="cost1" class="scenario-1-input" inputmode="numeric" oninput="formatNum(this);autoCalc()" placeholder="0">
-        </div>
-        <div>
+      <div class="grid">
+        <!-- 헤더 행 -->
+        <div class="col-header">조정전</div>
+        <div class="center-cell label-cell">
           <label>M-U경비 <span class="help">(원)</span></label>
-          <input type="text" id="mu" class="mu-input" inputmode="numeric" oninput="formatNum(this);autoCalc()" placeholder="0">
         </div>
-        <div class="auto-field">
-          <div class="af-label">필요경비 (조정후)</div>
-          <div class="af-value" id="cost2Val">0</div>
-          <div class="af-formula">= 조정전 + M-U</div>
-        </div>
+        <div class="col-header after">조정후</div>
 
-        <div class="auto-field">
-          <div class="af-label">소득금액 (조정전)</div>
-          <div class="af-value" id="inc1Val">0</div>
-          <div class="af-formula">= 수입 − 조정전</div>
+        <!-- 소득금액 행 -->
+        <div class="field-block">
+          <label>소득금액 (조정전) <span class="help">(원)</span></label>
+          <input type="text" id="inc1" inputmode="numeric" placeholder="0" oninput="formatNum(this);autoCalc()">
         </div>
-        <div class="empty"></div>
+        <div class="center-cell" style="align-self:stretch;">
+          <input type="text" id="mu" class="mu-input" inputmode="numeric" placeholder="0" oninput="formatNum(this);autoCalc()">
+        </div>
         <div class="auto-field">
           <div class="af-label">소득금액 (조정후)</div>
           <div class="af-value" id="inc2Val">0</div>
-          <div class="af-formula">= 수입 − 조정후</div>
+        </div>
+
+        <!-- 산출세액 행 -->
+        <div class="auto-field">
+          <div class="af-label">산출세액 (조정전)</div>
+          <div class="af-value tax" id="tax1Val">0</div>
+        </div>
+        <div></div>
+        <div class="auto-field">
+          <div class="af-label">산출세액 (조정후)</div>
+          <div class="af-value tax after" id="tax2Val">0</div>
+        </div>
+
+        <!-- 절감액 행 (조정후 컬럼에만) -->
+        <div></div>
+        <div></div>
+        <div class="savings-box">
+          <span class="s-label">절감액 (소득세 + 지방세)</span>
+          <span class="s-value" id="savingsVal">0</span>
         </div>
       </div>
 
@@ -153,7 +174,7 @@
 
     <!-- 결과부 -->
     <div class="card" id="resultCard" style="display:none;">
-      <div class="card-title">계산 결과</div>
+      <div class="card-title">계산 결과 (지역건강보험료 포함)</div>
       <table class="result-table">
         <thead>
           <tr>
@@ -167,7 +188,7 @@
       </table>
 
       <div class="summary-box">
-        <div class="summary-title">💡 M-U경비 반영에 따른 연간 총 절감액</div>
+        <div class="summary-title">💡 M-U경비 반영에 따른 연간 총 절감액 (지역건강보험료 포함)</div>
         <div class="summary-amount" id="totalSaving">0 원</div>
         <div class="summary-desc" id="totalSavingDesc">종합소득세 + 지방소득세 + 지역건강보험료 합산 기준</div>
       </div>
@@ -210,18 +231,7 @@ function fmt(n) {
   return Math.round(n).toLocaleString('ko-KR');
 }
 
-// 자동계산 (입력 시 실시간)
-function autoCalc() {
-  const rev = getNumber('revenue');
-  const c1 = getNumber('cost1');
-  const mu = getNumber('mu');
-  const c2 = c1 + mu;
-  document.getElementById('cost2Val').textContent = fmt(c2);
-  document.getElementById('inc1Val').textContent = fmt(Math.max(0, rev - c1));
-  document.getElementById('inc2Val').textContent = fmt(Math.max(0, rev - c2));
-}
-
-// 종합소득세 산출세액 계산 (2026년 귀속, 소득세법 §55)
+// 종합소득세 산출세액 (2026년 귀속, 소득세법 §55)
 function calcIncomeTax(taxBase) {
   if (taxBase <= 0) return 0;
   if (taxBase <= 14000000)    return taxBase * 0.06;
@@ -234,41 +244,64 @@ function calcIncomeTax(taxBase) {
   return taxBase * 0.45 - 65940000;
 }
 
-function calcScenario(revenue, cost) {
-  const businessIncome = Math.max(0, revenue - cost); // 사업소득금액 (= 과세표준, 공제 미고려)
-  const taxBase = businessIncome;
-  const calcTax = calcIncomeTax(taxBase);              // 산출세액 (= 결정세액, 세액공제 미고려)
-  const localTax = calcTax * 0.10;                     // 지방소득세 (산출세액 × 10%)
-  const incomeTaxTotal = calcTax + localTax;
+// 실시간 자동계산 (입력 카드 내 표시값)
+function autoCalc() {
+  const inc1 = getNumber('inc1');
+  const mu = getNumber('mu');
+  const inc2 = Math.max(0, inc1 - mu);
+  const t1 = calcIncomeTax(inc1);
+  const t2 = calcIncomeTax(inc2);
+  const totalTax1 = t1 + t1 * 0.10;
+  const totalTax2 = t2 + t2 * 0.10;
+  const savings = totalTax1 - totalTax2;
 
-  // 지역건강보험료 (월) - 소득분만
-  const monthlyIncome = businessIncome / 12;
+  document.getElementById('inc2Val').textContent = fmt(inc2);
+  document.getElementById('tax1Val').textContent = fmt(t1);
+  document.getElementById('tax2Val').textContent = fmt(t2);
+
+  const savingsEl = document.getElementById('savingsVal');
+  if (savings > 0.5) {
+    savingsEl.textContent = '−' + fmt(savings);
+    savingsEl.style.color = '#2c7a2c';
+  } else if (savings < -0.5) {
+    savingsEl.textContent = '+' + fmt(Math.abs(savings));
+    savingsEl.style.color = '#c92a2a';
+  } else {
+    savingsEl.textContent = '0';
+    savingsEl.style.color = '#8a94a6';
+  }
+}
+
+// 결과 테이블용 시나리오 계산 (지역건보 포함)
+function calcScenario(inc) {
+  const calcTax = calcIncomeTax(inc);
+  const localTax = calcTax * 0.10;
+  const incomeTaxTotal = calcTax + localTax;
+  const monthlyIncome = inc / 12;
   const healthMonthly = monthlyIncome * 0.0719;
   const ltcMonthly = healthMonthly * 0.1314;
   const monthlyTotal = healthMonthly + ltcMonthly;
-  const annualHealthTotal = monthlyTotal * 12;
-
+  const annualHealth = monthlyTotal * 12;
   return {
-    revenue, cost, businessIncome, taxBase,
-    calcTax, localTax, incomeTaxTotal,
-    healthMonthly, ltcMonthly, monthlyTotal, annualHealthTotal,
-    grandTotal: incomeTaxTotal + annualHealthTotal
+    inc, calcTax, localTax, incomeTaxTotal,
+    healthMonthly, ltcMonthly, monthlyTotal, annualHealth,
+    grandTotal: incomeTaxTotal + annualHealth
   };
 }
 
 function calculate() {
-  const revenue = getNumber('revenue');
-  const cost1 = getNumber('cost1');
+  const inc1 = getNumber('inc1');
   const mu = getNumber('mu');
-  const cost2 = cost1 + mu;
+  const inc2 = Math.max(0, inc1 - mu);
+  const rev = getNumber('rev');
 
-  if (revenue === 0) {
-    alert('총수입금액을 입력해주세요.');
+  if (inc1 === 0) {
+    alert('소득금액(조정전)을 입력해주세요.');
     return;
   }
 
-  const r1 = calcScenario(revenue, cost1);
-  const r2 = calcScenario(revenue, cost2);
+  const r1 = calcScenario(inc1);
+  const r2 = calcScenario(inc2);
 
   function diffCell(v1, v2) {
     const d = v1 - v2;
@@ -291,9 +324,10 @@ function calculate() {
   }
 
   let html = '';
-  html += row('총수입금액', r1.revenue, r2.revenue);
-  html += row('필요경비', r1.cost, r2.cost);
-  html += row('사업소득금액 (= 과세표준)', r1.businessIncome, r2.businessIncome);
+  if (rev > 0) {
+    html += row('총수입금액', rev, rev);
+  }
+  html += row('사업소득금액 (= 과세표준)', r1.inc, r2.inc);
 
   html += row('▌ 종합소득세 ▌', r1.calcTax, r2.calcTax, true);
   html += row('&nbsp;&nbsp;산출세액 (= 결정세액)', r1.calcTax, r2.calcTax);
@@ -304,7 +338,7 @@ function calculate() {
   html += row('&nbsp;&nbsp;건강보험료 (월)', r1.healthMonthly, r2.healthMonthly);
   html += row('&nbsp;&nbsp;장기요양보험료 (월)', r1.ltcMonthly, r2.ltcMonthly);
   html += row('&nbsp;&nbsp;월 합계', r1.monthlyTotal, r2.monthlyTotal);
-  html += row('&nbsp;&nbsp;연간 합계', r1.annualHealthTotal, r2.annualHealthTotal);
+  html += row('&nbsp;&nbsp;연간 합계', r1.annualHealth, r2.annualHealth);
 
   html += row('총 부담액 (연)', r1.grandTotal, r2.grandTotal, false, true);
 
@@ -332,7 +366,7 @@ function calculate() {
 }
 
 function resetAll() {
-  ['revenue','cost1','mu'].forEach(id => document.getElementById(id).value = '');
+  ['rev','inc1','mu'].forEach(id => document.getElementById(id).value = '');
   autoCalc();
   document.getElementById('resultCard').style.display = 'none';
 }
