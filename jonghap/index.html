@@ -12,6 +12,38 @@
   }
   .container { max-width: 1100px; margin: 0 auto; }
   header { margin-bottom: 24px; }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .sync-time {
+    font-size: 12px;
+    color: #8a94a6;
+    margin-top: 4px;
+  }
+  .refresh-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #5a6577;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .refresh-btn:hover {
+    background: white;
+    border-color: #d1d9e0;
+    color: #2c5aa0;
+  }
   h1 { font-size: 22px; font-weight: 700; color: #0d1b2a; margin-bottom: 4px; }
   .subtitle { font-size: 13px; color: #5a6577; }
 
@@ -110,6 +142,7 @@
     button { display: none; }
     .btn-group { display: none; }
     .keyboard-hint { display: none; }
+    .refresh-btn { display: none; }
   }
   @media (max-width: 700px) {
     .grid { grid-template-columns: 1fr; }
@@ -119,8 +152,14 @@
 <body>
   <div class="container">
     <header>
-      <h1>종합소득세 · 지역건강보험료 비교 시뮬레이션</h1>
-      <div class="subtitle">2026년 귀속 기준 · 세무법인삼호 남부지점 김선영 세무사</div>
+      <div class="header-row">
+        <div>
+          <h1>종합소득세 · 지역건강보험료 비교 시뮬레이션</h1>
+          <div class="subtitle">2026년 귀속 기준 · 세무법인삼호 남부지점 김선영 세무사</div>
+          <div class="sync-time">동기화: <span id="syncTime">-</span></div>
+        </div>
+        <button class="refresh-btn" onclick="location.reload(true)">🔄 새로고침</button>
+      </div>
     </header>
 
     <!-- 입력부 -->
@@ -129,7 +168,7 @@
 
       <div class="row1">
         <label>총수입금액 <span class="help">(원)</span></label>
-        <input type="text" id="rev" inputmode="numeric" placeholder="선택입력" oninput="formatNum(this);autoCalc()" onkeydown="handleNavKey(event)">
+        <input type="text" id="rev" inputmode="numeric" placeholder="선택입력" oninput="formatNum(this);autoCalc()">
       </div>
 
       <div class="grid">
@@ -141,11 +180,11 @@
         <!-- 소득금액 행 -->
         <div class="input-box">
           <div class="ib-label">소득금액 (조정전) <span class="help">(원)</span></div>
-          <input type="text" id="inc1" inputmode="numeric" placeholder="필수입력" oninput="formatNum(this);autoCalc()" onkeydown="handleNavKey(event)">
+          <input type="text" id="inc1" inputmode="numeric" placeholder="필수입력" oninput="formatNum(this);autoCalc()">
         </div>
         <div class="input-box">
           <div class="ib-label">M-U경비 <span class="help">(원)</span></div>
-          <input type="text" id="mu" inputmode="numeric" placeholder="필수입력" oninput="formatNum(this);autoCalc()" onkeydown="handleNavKey(event)">
+          <input type="text" id="mu" inputmode="numeric" placeholder="필수입력" oninput="formatNum(this);autoCalc()">
         </div>
         <div class="auto-field">
           <div class="af-label">소득금액 (조정후)</div>
@@ -229,6 +268,19 @@
   </div>
 
 <script>
+// 동기화 시간 표시
+(function() {
+  const el = document.getElementById('syncTime');
+  if (!el) return;
+  const d = new Date(document.lastModified);
+  if (isNaN(d.getTime())) { el.textContent = '-'; return; }
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  el.textContent = `${m}/${day} ${hh}:${mm}`;
+})();
+
 function formatNum(input) {
   let value = input.value.replace(/[^\d]/g, '');
   if (value === '') { input.value = ''; return; }
@@ -404,7 +456,6 @@ function moveFocusTo(id) {
   if (el) { el.focus(); el.select(); }
 }
 function handleNavKey(e) {
-  if (e.isComposing || e.keyCode === 229) return;
   const id = e.target.id;
   const pos = getNavPos(id);
   if (!pos) return;
@@ -454,6 +505,18 @@ function handleNavKey(e) {
     return;
   }
 }
+
+// 이벤트 리스너 등록
+['rev', 'inc1', 'mu'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('keydown', handleNavKey);
+});
+
+// 초기 포커스
+window.addEventListener('load', () => {
+  const revEl = document.getElementById('rev');
+  if (revEl) revEl.focus();
+});
 </script>
 </body>
 </html>
