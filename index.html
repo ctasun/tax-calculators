@@ -16,6 +16,38 @@
   }
   .container { max-width: 980px; margin: 0 auto; }
 
+  .top-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 0 4px;
+  }
+  .sync-time {
+    font-size: 12px;
+    color: #8a94a6;
+  }
+  .refresh-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #5a6577;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .refresh-btn:hover {
+    background: white;
+    border-color: #d1d9e0;
+    color: #2c5aa0;
+  }
+
   header {
     text-align: center;
     margin-bottom: 40px;
@@ -134,6 +166,11 @@
 </head>
 <body>
   <div class="container">
+    <div class="top-toolbar">
+      <div class="sync-time">동기화: <span id="syncTime">-</span></div>
+      <button class="refresh-btn" onclick="location.reload(true)">🔄 새로고침</button>
+    </div>
+
     <header>
       <div class="logo">📊</div>
       <h1>세무 계산기</h1>
@@ -161,5 +198,19 @@
       정확한 세액은 반드시 세무 전문가의 검토를 받으시기 바랍니다.
     </footer>
   </div>
+
+<script>
+(function() {
+  const el = document.getElementById('syncTime');
+  if (!el) return;
+  const d = new Date(document.lastModified);
+  if (isNaN(d.getTime())) { el.textContent = '-'; return; }
+  const m = d.getMonth() + 1;
+  const day = d.getDate();
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  el.textContent = `${m}/${day} ${hh}:${mm}`;
+})();
+</script>
 </body>
 </html>
