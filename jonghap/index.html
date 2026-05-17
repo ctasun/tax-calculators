@@ -1,3 +1,4 @@
+<!-- BUILD_DATE: 2026-05-17 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -22,6 +23,9 @@
     font-size: 12px;
     color: #8a94a6;
     margin-top: 4px;
+  }
+  .build-date::before {
+    content: " · ";
   }
   .refresh-btn {
     background: transparent;
@@ -143,6 +147,7 @@
     .btn-group { display: none; }
     .keyboard-hint { display: none; }
     .refresh-btn { display: none; }
+    .build-date { display: none; }
   }
   @media (max-width: 700px) {
     .grid { grid-template-columns: 1fr; }
@@ -156,9 +161,9 @@
         <div>
           <h1>종합소득세 · 지역건강보험료 비교 시뮬레이션</h1>
           <div class="subtitle">2026년 귀속 기준 · 세무법인삼호 남부지점 김선영 세무사</div>
-          <div class="sync-time">동기화: <span id="syncTime">-</span></div>
+          <div class="sync-time">동기화: <span id="syncTime">-</span><span class="build-date">업데이트 2026-05-17</span></div>
         </div>
-        <button class="refresh-btn" onclick="location.reload(true)">🔄 새로고침</button>
+        <button class="refresh-btn" onclick="location.href = location.pathname + '?v=' + Date.now()">🔄 새로고침</button>
       </div>
     </header>
 
