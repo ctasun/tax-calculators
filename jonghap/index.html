@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>종합소득세 시뮬레이터 — 세무법인삼호 남부지점</title>
-<!-- BUILD_DATE: 2026-05-17 -->
+<!-- BUILD_DATE: 2026-05-17 15:13 -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -15,7 +18,7 @@ body {
   font-size: 13px;
   min-height: 100vh;
 }
-.container { width: 100%; min-width: 820px; max-width: 1100px; margin: 0 auto; padding: 8px 10px; }
+.container { width: 100%; min-width: 640px; max-width: 720px; margin: 0 auto; padding: 8px 10px; }
 
 /* ===== 헤더 ===== */
 .app-header { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
@@ -61,24 +64,24 @@ body {
 
 .section-header {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 6px; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 6px; gap: 8px; flex-wrap: nowrap;
 }
-.section-title { font-size: 12px; font-weight: 600; color: #1e293b; margin: 0; }
-.inline-inputs { display: flex; gap: 6px; flex-wrap: wrap; }
+.section-title { font-size: 12px; font-weight: 600; color: #1e293b; margin: 0; flex-shrink: 0; white-space: nowrap; }
+.inline-inputs { display: flex; gap: 6px; flex-wrap: nowrap; flex: 1; min-width: 0; justify-content: flex-end; }
 .inline-input {
   padding: 4px 8px; font-size: 11px; border: 1px solid #cbd5e1;
   border-radius: 4px; font-family: inherit; background: white; color: #1e293b;
-  text-align: right; font-variant-numeric: tabular-nums;
+  text-align: right; font-variant-numeric: tabular-nums; min-width: 0;
 }
 .inline-input:focus { outline: none; border-color: #1e3a8a; box-shadow: 0 0 0 2px rgba(30,58,138,0.1); }
-.inline-input.code { text-align: center; width: 110px; }
-.inline-input.rev { width: 150px; }
+.inline-input.code { text-align: center; width: 100px; flex-shrink: 0; }
+.inline-input.rev { flex: 1; max-width: 160px; }
 .inline-input.matched { border-color: #1e3a8a; background: #f0f5ff; color: #1e3a8a; font-weight: 600; }
 .inline-input.unmatched { border-color: #be123c; background: #fef2f2; color: #be123c; }
 
 /* ===== 입력 필드 ===== */
 .income-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; }
-.field { display: flex; flex-direction: column; }
+.field { display: flex; flex-direction: column; min-width: 0; }
 .field-label { font-size: 10px; font-weight: 500; color: #475569; margin-bottom: 2px; }
 .field-label .accent { color: #1e3a8a; font-weight: 600; }
 .field-hint { font-size: 9px; color: #94a3b8; margin-top: 2px; }
@@ -168,7 +171,7 @@ body {
 .result-header-value .unit { font-size: 10px; font-weight: 400; opacity: 0.85; margin-left: 2px; }
 .result-body { padding: 5px 8px; font-size: 11.5px; font-variant-numeric: tabular-nums; }
 .result-body-title { font-size: 10px; font-weight: 700; color: #475569; margin-bottom: 3px; letter-spacing: 0.3px; }
-.result-row { display: flex; justify-content: space-between; padding: 2px 0; color: #475569; }
+.result-row { display: flex; justify-content: space-between; padding: 2px 0; color: #475569; gap: 6px; }
 .result-row .val { color: #1e293b; }
 .result-row.sub { font-size: 10px; color: #94a3b8; padding: 1px 0 1px 10px; }
 .result-row.highlight { padding: 3px 5px; margin: 1px -3px; background: #f1f5f9; border-radius: 3px; font-weight: 600; color: #1e293b; }
@@ -188,8 +191,8 @@ body {
 }
 .disclaimer strong { color: #334155; }
 
-/* ===== 반응형 (좁힘 PC: 481~950px - 헤더 컴팩트) ===== */
-@media (max-width: 950px) {
+/* ===== 반응형 (좁힘: 600px 이하 - 헤더 컴팩트) ===== */
+@media (max-width: 600px) {
   .update-time { display: none; }
   .header-right .btn-text .btn-label { display: none; }
   .header-right .btn-text { padding: 4px 8px; }
@@ -208,6 +211,9 @@ body {
   .header-right .btn-text { padding: 4px 8px; }
   .header-right .btn-text .btn-label { display: none; }
 
+  .section-header { flex-wrap: wrap; }
+  .inline-inputs { flex-wrap: wrap; }
+  .inline-input.rev { max-width: none; flex: 1 1 140px; }
   .income-grid { grid-template-columns: 1fr; }
   .mu-grid { grid-template-columns: 1fr; gap: 4px; }
   .mu-arrow { transform: rotate(90deg); padding: 0; line-height: 1; }
@@ -224,7 +230,6 @@ body {
   body { background: white !important; font-size: 10px !important; }
   .container { width: auto !important; min-width: 0 !important; max-width: none !important; padding: 0 !important; }
   .no-print { display: none !important; }
-  /* 인쇄 시 좁힘 모드 무효화 (날짜·텍스트 라벨 표시) — 단, .no-print 영역은 위 규칙에 따라 이미 숨겨짐 */
   .update-time { display: inline !important; }
   .btn-label { display: inline !important; }
   .app-header { margin-bottom: 4px; }
@@ -248,7 +253,6 @@ body {
   .adv-expanded-body { padding: 6px 8px; }
   .disclaimer { padding: 4px 8px; font-size: 8.5px; margin-top: 4px; }
   .card, .savings-banner, .result-panel, .compare-grid, .adv-expanded { page-break-inside: avoid; break-inside: avoid; }
-  /* 추가입력 토글: 닫힌 상태에서 인쇄 시 숨김 (요약값은 결과 패널에 이미 표시됨) */
   .adv-collapsed { display: none !important; }
 }
 </style>
@@ -656,13 +660,11 @@ function renderAll() {
   var before = calcScenario(state.businessIncome);
   var after = calcScenario(bizAfter);
 
-  // 헤더 값
   var beforeHdrVal = before.isRefund ? before.totalBurden : before.realTotalBurden;
   var afterHdrVal = after.isRefund ? after.totalBurden : after.realTotalBurden;
   document.getElementById('total-burden-before').innerHTML = fmt(beforeHdrVal) + '<span class="unit">원</span>';
   document.getElementById('total-burden-after').innerHTML = fmt(afterHdrVal) + '<span class="unit">원</span>';
 
-  // 헤더 클래스 및 라벨 (환급 케이스 분기)
   var hdrBefore = document.getElementById('result-header-before');
   var hdrAfter = document.getElementById('result-header-after');
   hdrBefore.className = 'result-header ' + (before.isRefund ? 'refund-hdr' : 'before-hdr');
@@ -673,7 +675,6 @@ function renderAll() {
   document.getElementById('result-body-before').innerHTML = renderResultBody(before, false);
   document.getElementById('result-body-after').innerHTML = renderResultBody(after, true);
 
-  // 절감액 (환급 케이스는 부호 반전)
   var beforeTotal = before.isRefund ? -before.totalBurden : before.realTotalBurden;
   var afterTotal = after.isRefund ? -after.totalBurden : after.realTotalBurden;
   var savings = beforeTotal - afterTotal;
@@ -682,7 +683,6 @@ function renderAll() {
   else if (savings > 0) sv.innerHTML = '−' + fmt(savings) + '<span class="unit">원</span>';
   else sv.innerHTML = '+' + fmt(Math.abs(savings)) + '<span class="unit">원</span>';
 
-  // 추가입력 요약
   var sumParts = [];
   sumParts.push('인적공제 ' + fmt(before.personalDed));
   if (state.pensionPremium > 0) sumParts.push('국민연금 ' + fmt(state.pensionPremium));
@@ -735,7 +735,6 @@ function recalcBizAuto() {
     prepaidMsg.textContent = '🔄 수입금액 × 3% 자동';
     state.businessAutoFilled = false;
 
-    // 반영 후 갱신
     var after = Math.max(0, auto - state.muExpense);
     afterInput.value = after > 0 ? fmt(after) : '';
   } else {
@@ -748,7 +747,6 @@ function recalcBizAuto() {
     }
   }
 
-  // 결정세액 0 임계점 (기납부만 입력, 사업소득 비어있을 때)
   if (!active && state.businessAutoFilled && state.prepaid > 0) {
     var maxBase = findMaxBaseZeroTax(state.taxCredit);
     var selfInfo = parseRrn(state.selfRrn);
@@ -769,7 +767,6 @@ function recalcBizAuto() {
       bizMsg.className = 'field-msg warn';
       bizMsg.textContent = '⚠️ 100% 환급 불가 (다른 소득으로 결정세액>0)';
     }
-    // 반영 후
     var after2 = Math.max(0, maxBiz - state.muExpense);
     afterInput.value = after2 > 0 ? fmt(after2) : '';
   }
@@ -871,7 +868,7 @@ document.getElementById('adv-expanded-header').addEventListener('click', toggleA
 
 /* ===== 버튼 ===== */
 function doPrint() { window.print(); }
-function doUpdate() { window.location.href = window.location.pathname + '?v=' + Date.now(); }
+function doUpdate() { window.location.reload(); }
 function doReset() {
   state.revenue = 0; state.businessCode = ""; state.bizAutoDisabled = false;
   state.businessIncome = 0; state.businessAutoFilled = false;
@@ -931,7 +928,6 @@ codeEl.addEventListener('focus', function() { codeEl.select(); });
 
 setupExprInput(document.getElementById('businessIncome'), function(v) {
   state.businessIncome = v;
-  // 사용자가 직접 수정 → 자동환산 해제
   if (state.businessCode && BUSINESS_CODES[state.businessCode] && state.revenue > 0) {
     state.bizAutoDisabled = true;
     document.getElementById('biz-msg').style.display = 'none';
@@ -939,7 +935,6 @@ setupExprInput(document.getElementById('businessIncome'), function(v) {
     document.getElementById('businessIncome').classList.remove('auto-filled');
   }
   state.businessAutoFilled = false;
-  // 반영 후 갱신
   var after = Math.max(0, v - state.muExpense);
   document.getElementById('businessIncomeAfter').value = after > 0 ? fmt(after) : '';
   renderAll();
@@ -963,7 +958,6 @@ setupExprInput(document.getElementById('muExpense'), function(v) {
 });
 
 setupExprInput(document.getElementById('businessIncomeAfter'), function(v) {
-  // 반영 후 입력 → M-U경비 역산
   state.muExpense = Math.max(0, state.businessIncome - v);
   document.getElementById('muExpense').value = state.muExpense > 0 ? fmt(state.muExpense) : '';
   renderAll();
