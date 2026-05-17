@@ -1,3 +1,4 @@
+<!-- BUILD_DATE: 2026-05-17 -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -26,6 +27,9 @@
   .sync-time {
     font-size: 12px;
     color: #8a94a6;
+  }
+  .build-date::before {
+    content: " · ";
   }
   .refresh-btn {
     background: transparent;
@@ -162,13 +166,17 @@
     line-height: 1.6;
   }
   footer strong { color: #4a5568; }
+
+  @media print {
+    .refresh-btn, .build-date { display: none; }
+  }
 </style>
 </head>
 <body>
   <div class="container">
     <div class="top-toolbar">
-      <div class="sync-time">동기화: <span id="syncTime">-</span></div>
-      <button class="refresh-btn" onclick="location.reload(true)">🔄 새로고침</button>
+      <div class="sync-time">동기화: <span id="syncTime">-</span><span class="build-date">업데이트 2026-05-17</span></div>
+      <button class="refresh-btn" onclick="location.href = location.pathname + '?v=' + Date.now()">🔄 새로고침</button>
     </div>
 
     <header>
