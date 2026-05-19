@@ -3,11 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <title>종합소득세 시뮬레이터 — 세무법인삼호 남부지점</title>
-<!-- BUILD_DATE: 2026-05-17 15:13 -->
+<!-- BUILD_DATE: 2026-05-19 -->
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -18,7 +15,7 @@ body {
   font-size: 13px;
   min-height: 100vh;
 }
-.container { width: 100%; min-width: 640px; max-width: 720px; margin: 0 auto; padding: 8px 10px; }
+.container { width: 100%; min-width: 820px; max-width: 1100px; margin: 0 auto; padding: 8px 10px; }
 
 /* ===== 헤더 ===== */
 .app-header { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
@@ -64,24 +61,24 @@ body {
 
 .section-header {
   display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 6px; gap: 8px; flex-wrap: nowrap;
+  margin-bottom: 6px; gap: 8px; flex-wrap: wrap;
 }
-.section-title { font-size: 12px; font-weight: 600; color: #1e293b; margin: 0; flex-shrink: 0; white-space: nowrap; }
-.inline-inputs { display: flex; gap: 6px; flex-wrap: nowrap; flex: 1; min-width: 0; justify-content: flex-end; }
+.section-title { font-size: 12px; font-weight: 600; color: #1e293b; margin: 0; }
+.inline-inputs { display: flex; gap: 6px; flex-wrap: wrap; }
 .inline-input {
   padding: 4px 8px; font-size: 11px; border: 1px solid #cbd5e1;
   border-radius: 4px; font-family: inherit; background: white; color: #1e293b;
-  text-align: right; font-variant-numeric: tabular-nums; min-width: 0;
+  text-align: right; font-variant-numeric: tabular-nums;
 }
 .inline-input:focus { outline: none; border-color: #1e3a8a; box-shadow: 0 0 0 2px rgba(30,58,138,0.1); }
-.inline-input.code { text-align: center; width: 100px; flex-shrink: 0; }
-.inline-input.rev { flex: 1; max-width: 160px; }
+.inline-input.code { text-align: center; width: 110px; }
+.inline-input.rev { width: 150px; }
 .inline-input.matched { border-color: #1e3a8a; background: #f0f5ff; color: #1e3a8a; font-weight: 600; }
 .inline-input.unmatched { border-color: #be123c; background: #fef2f2; color: #be123c; }
 
 /* ===== 입력 필드 ===== */
 .income-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 8px; }
-.field { display: flex; flex-direction: column; min-width: 0; }
+.field { display: flex; flex-direction: column; }
 .field-label { font-size: 10px; font-weight: 500; color: #475569; margin-bottom: 2px; }
 .field-label .accent { color: #1e3a8a; font-weight: 600; }
 .field-hint { font-size: 9px; color: #94a3b8; margin-top: 2px; }
@@ -99,6 +96,7 @@ body {
 .num-input.after { border: 1.5px solid #1e3a8a; background: #f8fafc; font-weight: 700; color: #1e3a8a; }
 .num-input.mu { border: 1.5px solid #64748b; font-weight: 600; }
 .num-input.auto-filled { border-color: #1e3a8a; background: #f0f5ff; }
+.num-input.manual-active { border: 1.5px solid #1e3a8a; background: #f0f5ff; font-weight: 600; color: #1e3a8a; }
 
 /* ===== M-U경비 ===== */
 .mu-grid { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 8px; align-items: end; }
@@ -143,8 +141,12 @@ body {
   border: 1px solid #cbd5e1; border-radius: 3px; font-weight: 600; margin-left: 4px;
 }
 .disabled-check { font-size: 11px; color: #475569; display: flex; align-items: center; gap: 3px; }
-.deduction-grid { display: grid; grid-template-columns: 2fr 3fr; gap: 8px; }
+.deduction-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 .credit-grid { display: grid; grid-template-columns: 2fr 3fr; gap: 8px; }
+
+/* 직접입력 모드일 때 인적공제·국민연금·기타 입력 영역 비활성화 표시 */
+.dim-when-manual { opacity: 0.45; transition: opacity 0.15s; }
+.dim-when-manual input { background: #f1f5f9 !important; }
 
 /* ===== 절감액 배너 ===== */
 .savings-banner {
@@ -171,7 +173,7 @@ body {
 .result-header-value .unit { font-size: 10px; font-weight: 400; opacity: 0.85; margin-left: 2px; }
 .result-body { padding: 5px 8px; font-size: 11.5px; font-variant-numeric: tabular-nums; }
 .result-body-title { font-size: 10px; font-weight: 700; color: #475569; margin-bottom: 3px; letter-spacing: 0.3px; }
-.result-row { display: flex; justify-content: space-between; padding: 2px 0; color: #475569; gap: 6px; }
+.result-row { display: flex; justify-content: space-between; padding: 2px 0; color: #475569; }
 .result-row .val { color: #1e293b; }
 .result-row.sub { font-size: 10px; color: #94a3b8; padding: 1px 0 1px 10px; }
 .result-row.highlight { padding: 3px 5px; margin: 1px -3px; background: #f1f5f9; border-radius: 3px; font-weight: 600; color: #1e293b; }
@@ -191,8 +193,8 @@ body {
 }
 .disclaimer strong { color: #334155; }
 
-/* ===== 반응형 (좁힘: 600px 이하 - 헤더 컴팩트) ===== */
-@media (max-width: 600px) {
+/* ===== 반응형 (좁힘 PC: 481~950px - 헤더 컴팩트) ===== */
+@media (max-width: 950px) {
   .update-time { display: none; }
   .header-right .btn-text .btn-label { display: none; }
   .header-right .btn-text { padding: 4px 8px; }
@@ -211,9 +213,6 @@ body {
   .header-right .btn-text { padding: 4px 8px; }
   .header-right .btn-text .btn-label { display: none; }
 
-  .section-header { flex-wrap: wrap; }
-  .inline-inputs { flex-wrap: wrap; }
-  .inline-input.rev { max-width: none; flex: 1 1 140px; }
   .income-grid { grid-template-columns: 1fr; }
   .mu-grid { grid-template-columns: 1fr; gap: 4px; }
   .mu-arrow { transform: rotate(90deg); padding: 0; line-height: 1; }
@@ -230,6 +229,7 @@ body {
   body { background: white !important; font-size: 10px !important; }
   .container { width: auto !important; min-width: 0 !important; max-width: none !important; padding: 0 !important; }
   .no-print { display: none !important; }
+  /* 인쇄 시 좁힘 모드 무효화 (날짜·텍스트 라벨 표시) — 단, .no-print 영역은 위 규칙에 따라 이미 숨겨짐 */
   .update-time { display: inline !important; }
   .btn-label { display: inline !important; }
   .app-header { margin-bottom: 4px; }
@@ -253,6 +253,7 @@ body {
   .adv-expanded-body { padding: 6px 8px; }
   .disclaimer { padding: 4px 8px; font-size: 8.5px; margin-top: 4px; }
   .card, .savings-banner, .result-panel, .compare-grid, .adv-expanded { page-break-inside: avoid; break-inside: avoid; }
+  /* 추가입력 토글: 닫힌 상태에서 인쇄 시 숨김 (요약값은 결과 패널에 이미 표시됨) */
   .adv-collapsed { display: none !important; }
 }
 </style>
@@ -341,20 +342,25 @@ body {
   <div class="adv-expanded-body">
     <div class="adv-section">
       <div class="adv-section-title">소득공제 (인적공제 · 국민연금 · 기타)</div>
-      <div class="rrn-row">
+      <div class="rrn-row dim-when-manual" id="rrn-row-self">
         <span class="rrn-label">본인</span>
         <input type="text" class="rrn-input" id="selfRrn" placeholder="YYMMDD-S" maxlength="8" data-nav="primary">
         <label class="disabled-check"><input type="checkbox" id="selfDisabled" tabindex="-1"> 장애인</label>
         <span class="rrn-info" id="self-info">미입력 → 기본공제만</span>
       </div>
       <div class="deduction-grid">
-        <div class="field">
+        <div class="field dim-when-manual" id="field-pension">
           <label class="field-label">국민연금보험료</label>
           <input type="text" class="num-input" id="pensionPremium" data-nav="primary">
         </div>
-        <div class="field">
+        <div class="field dim-when-manual" id="field-other-ded">
           <label class="field-label">기타 소득공제 <span style="color:#94a3b8; font-weight:400;">(신용카드·주택자금 등)</span></label>
           <input type="text" class="num-input" id="otherDeduction" data-nav="primary">
+        </div>
+        <div class="field">
+          <label class="field-label">종합소득공제 <span style="color:#1e3a8a; font-weight:600;">직접입력 ★</span></label>
+          <input type="text" class="num-input" id="manualDeduction" data-nav="primary">
+          <span class="field-hint">입력 시 인적·국민연금·기타 모두 무시</span>
         </div>
       </div>
     </div>
@@ -402,6 +408,7 @@ body {
 <div class="disclaimer">
   <strong>건보+장기요양 8.13%</strong> = 7.19% × 1.1314 (2026년 지역가입자 통합요율)<br>
   <strong>기본 적용값</strong> · 종합소득공제 = 인적공제 본인 1,500,000 (만 70세 이상 시 +1,000,000) · 표준세액공제 70,000 · 기납부세액 0<br>
+  <strong>종합소득공제 직접입력</strong> · 입력 시 인적공제·국민연금·기타 소득공제 모두 무시하고 입력값만 적용<br>
   <strong>인적용역 자동환산</strong> · 업종코드 940xxx 입력 시 단순경비율 자동 환산 + 원천징수 3% 자동<br>
   <strong>※ 단순 추정치</strong> · 실제 신고 결과와 차이 가능 · 건보료는 부과점수(재산분) 제외 소득분만
 </div>
@@ -485,6 +492,7 @@ var state = {
   selfDisabled: false,
   pensionPremium: 0,
   otherDeduction: 0,
+  manualDeduction: 0,
   taxCredit: 70000,
   prepaid: 0
 };
@@ -592,7 +600,16 @@ function calcScenario(businessIncomeVal) {
   var disabledCnt = state.selfDisabled ? 1 : 0;
   var disabledDed = disabledCnt * 2000000;
   var personalDed = basicDed + elderlyDed + disabledDed;
-  var totalDed = personalDed + state.pensionPremium + state.otherDeduction;
+
+  // 직접입력 모드: 인적공제·국민연금·기타 모두 무시하고 입력값만 적용
+  var isManual = state.manualDeduction > 0;
+  var totalDed;
+  if (isManual) {
+    totalDed = state.manualDeduction;
+  } else {
+    totalDed = personalDed + state.pensionPremium + state.otherDeduction;
+  }
+
   var taxBase = Math.max(0, totalIncome - totalDed);
   var calcTaxVal = calcTax(taxBase);
   var decidedTax = Math.max(0, calcTaxVal - state.taxCredit);
@@ -610,7 +627,7 @@ function calcScenario(businessIncomeVal) {
     finalTax:finalTax, isZeroPrepaid:isZeroPrepaid, isRefund:isRefund,
     headerBase:headerBase, localTax:localTax, totalBurden:totalBurden,
     healthIns:healthIns, realTotalBurden:realTotalBurden,
-    elderlyCnt:elderlyCnt, disabledCnt:disabledCnt
+    elderlyCnt:elderlyCnt, disabledCnt:disabledCnt, isManual:isManual
   };
 }
 
@@ -619,14 +636,18 @@ function renderResultBody(r, isAfter) {
   var html = '';
   html += '<div class="result-body-title">상세 계산 내역</div>';
   html += '<div class="result-row"><span>종합소득금액</span><span class="val">'+fmt(r.totalIncome)+'</span></div>';
-  html += '<div class="result-row"><span>(−) 종합소득공제</span><span class="val">'+fmt(r.totalDed)+'</span></div>';
 
-  var subParts = ['본인'];
-  if (r.elderlyCnt > 0) subParts.push('경로');
-  if (r.disabledCnt > 0) subParts.push('장애');
-  html += '<div class="result-row sub"><span>인적공제 ('+subParts.join('·')+')</span><span>'+fmt(r.personalDed)+'</span></div>';
-  if (state.pensionPremium > 0) html += '<div class="result-row sub"><span>국민연금보험료</span><span>'+fmt(state.pensionPremium)+'</span></div>';
-  if (state.otherDeduction > 0) html += '<div class="result-row sub"><span>기타 소득공제</span><span>'+fmt(state.otherDeduction)+'</span></div>';
+  if (r.isManual) {
+    html += '<div class="result-row"><span>(−) 종합소득공제 <span style="color:#1e3a8a; font-weight:600;">[직접입력]</span></span><span class="val">'+fmt(r.totalDed)+'</span></div>';
+  } else {
+    html += '<div class="result-row"><span>(−) 종합소득공제</span><span class="val">'+fmt(r.totalDed)+'</span></div>';
+    var subParts = ['본인'];
+    if (r.elderlyCnt > 0) subParts.push('경로');
+    if (r.disabledCnt > 0) subParts.push('장애');
+    html += '<div class="result-row sub"><span>인적공제 ('+subParts.join('·')+')</span><span>'+fmt(r.personalDed)+'</span></div>';
+    if (state.pensionPremium > 0) html += '<div class="result-row sub"><span>국민연금보험료</span><span>'+fmt(state.pensionPremium)+'</span></div>';
+    if (state.otherDeduction > 0) html += '<div class="result-row sub"><span>기타 소득공제</span><span>'+fmt(state.otherDeduction)+'</span></div>';
+  }
 
   html += '<div class="result-row highlight"><span>= 과세표준</span><span>'+fmt(r.taxBase)+'</span></div>';
   html += '<div class="result-row"><span>산출세액</span><span class="val">'+fmt(r.calcTaxVal)+'</span></div>';
@@ -660,11 +681,13 @@ function renderAll() {
   var before = calcScenario(state.businessIncome);
   var after = calcScenario(bizAfter);
 
+  // 헤더 값
   var beforeHdrVal = before.isRefund ? before.totalBurden : before.realTotalBurden;
   var afterHdrVal = after.isRefund ? after.totalBurden : after.realTotalBurden;
   document.getElementById('total-burden-before').innerHTML = fmt(beforeHdrVal) + '<span class="unit">원</span>';
   document.getElementById('total-burden-after').innerHTML = fmt(afterHdrVal) + '<span class="unit">원</span>';
 
+  // 헤더 클래스 및 라벨 (환급 케이스 분기)
   var hdrBefore = document.getElementById('result-header-before');
   var hdrAfter = document.getElementById('result-header-after');
   hdrBefore.className = 'result-header ' + (before.isRefund ? 'refund-hdr' : 'before-hdr');
@@ -675,6 +698,7 @@ function renderAll() {
   document.getElementById('result-body-before').innerHTML = renderResultBody(before, false);
   document.getElementById('result-body-after').innerHTML = renderResultBody(after, true);
 
+  // 절감액 (환급 케이스는 부호 반전)
   var beforeTotal = before.isRefund ? -before.totalBurden : before.realTotalBurden;
   var afterTotal = after.isRefund ? -after.totalBurden : after.realTotalBurden;
   var savings = beforeTotal - afterTotal;
@@ -683,15 +707,38 @@ function renderAll() {
   else if (savings > 0) sv.innerHTML = '−' + fmt(savings) + '<span class="unit">원</span>';
   else sv.innerHTML = '+' + fmt(Math.abs(savings)) + '<span class="unit">원</span>';
 
+  // 추가입력 요약
   var sumParts = [];
-  sumParts.push('인적공제 ' + fmt(before.personalDed));
-  if (state.pensionPremium > 0) sumParts.push('국민연금 ' + fmt(state.pensionPremium));
-  if (state.otherDeduction > 0) sumParts.push('기타공제 ' + fmt(state.otherDeduction));
+  if (before.isManual) {
+    sumParts.push('종합소득공제(직접) ' + fmt(before.totalDed));
+  } else {
+    sumParts.push('인적공제 ' + fmt(before.personalDed));
+    if (state.pensionPremium > 0) sumParts.push('국민연금 ' + fmt(state.pensionPremium));
+    if (state.otherDeduction > 0) sumParts.push('기타공제 ' + fmt(state.otherDeduction));
+  }
   sumParts.push('세액공제 ' + fmt(state.taxCredit));
   sumParts.push('기납부 ' + fmt(state.prepaid));
   document.getElementById('adv-summary').textContent = sumParts.join(' · ');
 
+  // 직접입력 모드일 때 인적·국민연금·기타 영역 디밍
+  applyManualDimming();
+
   renderSelfInfo();
+}
+
+function applyManualDimming() {
+  var isManual = state.manualDeduction > 0;
+  var ids = ['rrn-row-self', 'field-pension', 'field-other-ded'];
+  for (var i = 0; i < ids.length; i++) {
+    var el = document.getElementById(ids[i]);
+    if (!el) continue;
+    if (isManual) el.classList.add('dim-when-manual-active');
+    else el.classList.remove('dim-when-manual-active');
+    el.style.opacity = isManual ? '0.45' : '1';
+  }
+  var mEl = document.getElementById('manualDeduction');
+  if (isManual) mEl.classList.add('manual-active');
+  else mEl.classList.remove('manual-active');
 }
 
 function renderSelfInfo() {
@@ -735,6 +782,7 @@ function recalcBizAuto() {
     prepaidMsg.textContent = '🔄 수입금액 × 3% 자동';
     state.businessAutoFilled = false;
 
+    // 반영 후 갱신
     var after = Math.max(0, auto - state.muExpense);
     afterInput.value = after > 0 ? fmt(after) : '';
   } else {
@@ -747,13 +795,19 @@ function recalcBizAuto() {
     }
   }
 
+  // 결정세액 0 임계점 (기납부만 입력, 사업소득 비어있을 때)
   if (!active && state.businessAutoFilled && state.prepaid > 0) {
     var maxBase = findMaxBaseZeroTax(state.taxCredit);
-    var selfInfo = parseRrn(state.selfRrn);
-    var elderlyDed = (selfInfo && selfInfo.age >= 70) ? 1000000 : 0;
-    var disabledDed = state.selfDisabled ? 2000000 : 0;
-    var personalDed = 1500000 + elderlyDed + disabledDed;
-    var totalDed = personalDed + state.pensionPremium + state.otherDeduction;
+    var totalDed;
+    if (state.manualDeduction > 0) {
+      totalDed = state.manualDeduction;
+    } else {
+      var selfInfo = parseRrn(state.selfRrn);
+      var elderlyDed = (selfInfo && selfInfo.age >= 70) ? 1000000 : 0;
+      var disabledDed = state.selfDisabled ? 2000000 : 0;
+      var personalDed = 1500000 + elderlyDed + disabledDed;
+      totalDed = personalDed + state.pensionPremium + state.otherDeduction;
+    }
     var maxBiz = Math.max(0, maxBase + totalDed - state.laborIncome - state.otherIncome);
     state.businessIncome = maxBiz;
     bizInput.value = maxBiz > 0 ? fmt(maxBiz) : '';
@@ -767,6 +821,7 @@ function recalcBizAuto() {
       bizMsg.className = 'field-msg warn';
       bizMsg.textContent = '⚠️ 100% 환급 불가 (다른 소득으로 결정세액>0)';
     }
+    // 반영 후
     var after2 = Math.max(0, maxBiz - state.muExpense);
     afterInput.value = after2 > 0 ? fmt(after2) : '';
   }
@@ -802,6 +857,20 @@ function setupExprInput(el, onCommit, opts) {
       var num = cleaned.replace(/[^\d]/g, '');
       var val = num === '' ? 0 : parseInt(num, 10);
       if (isNaN(val)) val = 0;
+
+      // 실시간 콤마 포맷팅 (커서 위치 보존)
+      var oldLen = el.value.length;
+      var oldCaret = el.selectionStart;
+      var newValue = num === '' ? '' : val.toLocaleString('ko-KR');
+      if (el.value !== newValue) {
+        el.value = newValue;
+        var newLen = newValue.length;
+        var newCaret = oldCaret + (newLen - oldLen);
+        if (newCaret < 0) newCaret = 0;
+        if (newCaret > newLen) newCaret = newLen;
+        try { el.setSelectionRange(newCaret, newCaret); } catch (e) {}
+      }
+
       onCommit(val);
       if (opts.previewEl) opts.previewEl.style.display = 'none';
       if (opts.hintEl) opts.hintEl.style.display = '';
@@ -868,13 +937,14 @@ document.getElementById('adv-expanded-header').addEventListener('click', toggleA
 
 /* ===== 버튼 ===== */
 function doPrint() { window.print(); }
-function doUpdate() { window.location.reload(); }
+function doUpdate() { window.location.href = window.location.pathname + '?v=' + Date.now(); }
 function doReset() {
   state.revenue = 0; state.businessCode = ""; state.bizAutoDisabled = false;
   state.businessIncome = 0; state.businessAutoFilled = false;
   state.laborIncome = 0; state.otherIncome = 0; state.muExpense = 0;
   state.selfRrn = ""; state.selfDisabled = false;
   state.pensionPremium = 0; state.otherDeduction = 0;
+  state.manualDeduction = 0;
   state.taxCredit = 70000; state.prepaid = 0;
 
   document.getElementById('revenue').value = '';
@@ -890,6 +960,8 @@ function doReset() {
   document.getElementById('selfDisabled').checked = false;
   document.getElementById('pensionPremium').value = '';
   document.getElementById('otherDeduction').value = '';
+  document.getElementById('manualDeduction').value = '';
+  document.getElementById('manualDeduction').classList.remove('manual-active');
   document.getElementById('taxCredit').value = fmt(70000);
   document.getElementById('prepaid').value = '';
   document.getElementById('prepaid').classList.remove('auto-filled');
@@ -928,6 +1000,7 @@ codeEl.addEventListener('focus', function() { codeEl.select(); });
 
 setupExprInput(document.getElementById('businessIncome'), function(v) {
   state.businessIncome = v;
+  // 사용자가 직접 수정 → 자동환산 해제
   if (state.businessCode && BUSINESS_CODES[state.businessCode] && state.revenue > 0) {
     state.bizAutoDisabled = true;
     document.getElementById('biz-msg').style.display = 'none';
@@ -935,6 +1008,7 @@ setupExprInput(document.getElementById('businessIncome'), function(v) {
     document.getElementById('businessIncome').classList.remove('auto-filled');
   }
   state.businessAutoFilled = false;
+  // 반영 후 갱신
   var after = Math.max(0, v - state.muExpense);
   document.getElementById('businessIncomeAfter').value = after > 0 ? fmt(after) : '';
   renderAll();
@@ -958,6 +1032,7 @@ setupExprInput(document.getElementById('muExpense'), function(v) {
 });
 
 setupExprInput(document.getElementById('businessIncomeAfter'), function(v) {
+  // 반영 후 입력 → M-U경비 역산
   state.muExpense = Math.max(0, state.businessIncome - v);
   document.getElementById('muExpense').value = state.muExpense > 0 ? fmt(state.muExpense) : '';
   renderAll();
@@ -982,6 +1057,9 @@ setupExprInput(document.getElementById('pensionPremium'), function(v) {
 });
 setupExprInput(document.getElementById('otherDeduction'), function(v) {
   state.otherDeduction = v; renderAll();
+});
+setupExprInput(document.getElementById('manualDeduction'), function(v) {
+  state.manualDeduction = v; renderAll();
 });
 setupExprInput(document.getElementById('taxCredit'), function(v) {
   state.taxCredit = v; renderAll();
