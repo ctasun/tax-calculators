@@ -619,7 +619,7 @@ function calcScenario(businessIncomeVal) {
   var headerBase = isZeroPrepaid ? decidedTax : Math.abs(finalTax);
   var localTax = Math.floor(headerBase * 0.1);
   var totalBurden = headerBase + localTax;
-  var healthIns = (!isRefund && totalIncome > 0) ? annualHealth(totalIncome) : 0;
+  var healthIns = totalIncome > 0 ? annualHealth(totalIncome) : 0;
   var realTotalBurden = totalBurden + healthIns;
   return {
     totalIncome:totalIncome, personalDed:personalDed, totalDed:totalDed,
@@ -668,6 +668,7 @@ function renderResultBody(r, isAfter) {
 
   if (r.isRefund) {
     html += '<div class="result-row refund-total"><span>총 환급예정세액</span><span>'+fmt(r.totalBurden)+'</span></div>';
+    html += '<div class="result-row '+(isAfter?'total-after':'total-before')+'"><span>건보+장기요양 (×8.13%)</span><span>'+fmt(r.healthIns)+'</span></div>';
   } else {
     var totalCls = isAfter ? 'total-after' : 'total-before';
     html += '<div class="result-row '+totalCls+'"><span>총 부담세액 (소계)</span><span>'+fmt(r.totalBurden)+'</span></div>';
@@ -699,8 +700,8 @@ function renderAll() {
   document.getElementById('result-body-after').innerHTML = renderResultBody(after, true);
 
   // 절감액 (환급 케이스는 부호 반전)
-  var beforeTotal = before.isRefund ? -before.totalBurden : before.realTotalBurden;
-  var afterTotal = after.isRefund ? -after.totalBurden : after.realTotalBurden;
+  var beforeTotal = before.isRefund ? -before.totalBurden + before.healthIns : before.realTotalBurden;
+  var afterTotal = after.isRefund ? -after.totalBurden + after.healthIns : after.realTotalBurden;
   var savings = beforeTotal - afterTotal;
   var sv = document.getElementById('savings-value');
   if (Math.abs(savings) < 0.5) sv.innerHTML = '0<span class="unit">원</span>';
